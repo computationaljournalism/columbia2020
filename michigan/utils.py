@@ -18,14 +18,16 @@ def get_folder_name(directory_name):
         
     '''
     
-    now = datetime.utcnow()
-    folder_name = f'{now.strftime("%Y-%m-%d")}/{directory_name}'
+#    now = datetime.utcnow()
+    now = datetime.now()
+    folder_name = f'data/{now.strftime("%Y-%m-%d")}/{directory_name}'
     return folder_name
 
 def get_file_name(file_name):
     ''' prefix the file name with HHMMSS
     '''
-    now = datetime.utcnow()
+#    now = datetime.utcnow()
+    now = datetime.now()
     return f'{now.strftime("%H%M%S")}_{file_name}'
 
 def _save_data_file(folder_name, file_name, file_data):
