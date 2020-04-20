@@ -3,8 +3,9 @@
 ################################
 # use utils.py
 import sys
-sys.path.append("../bin")
+sys.path.append("../")
 import utils
+import sheets
 ################################
 
 # This code pulls the data on Oakland county corona virus cases by zip code from https://www.oakgov.com/covid/casesByZip.html. The data includes death toll, number of cases and population by zip code area in Oakland
@@ -68,3 +69,18 @@ utils.save_freepress_file("Oakland.csv", fpcsv)
 log.write("6. Saved Freepress\n")
 ##############################
 
+#### save csv to sheets ######
+
+GOOGLE_SHEET_ID = '1wtkFL6BIZQoLnUVfcr8y_2XyjSzlrPimH6A0lMjtlys'
+try:
+    # we need to convert the dataframe to a list of lists
+    # and then update via google sheets api
+    data_to_save = [fp.columns.values.tolist()] + fp.values.tolist() 
+    sheets.update_sheet(GOOGLE_SHEET_ID, data_to_save)
+    log.write("7. Updated google sheet\n")
+
+except Exception as exc:
+    print(exc)
+    log.write(f'exception writing to sheet: {exc}')
+
+##############################
