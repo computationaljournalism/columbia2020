@@ -40,7 +40,7 @@
 
 [Google's Transparency Report](https://transparencyreport.google.com/political-ads/region/US)
 
-> _This is Google's update on political ad buys
+> _This is Google's update on political ad buys_
 
 [OpenFEC](https://api.open.fec.gov/developers/)
 
