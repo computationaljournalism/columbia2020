@@ -3,7 +3,7 @@
 ################################
 # use utils.py
 import sys
-sys.path.append("../")
+sys.path.append("../bin")
 import utils
 import sheets
 ################################
