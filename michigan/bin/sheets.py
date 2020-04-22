@@ -93,5 +93,5 @@ def test():
     sheet_name = 'Oakland County'
     update_sheet(SAMPLE_SPREADSHEET_ID, sheet_name, values)
 
-if __name__ == '__main__':
-    test()
+#if __name__ == '__main__':
+#    test()
