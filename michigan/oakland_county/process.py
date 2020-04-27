@@ -1,4 +1,5 @@
-# ## Scraping Oakland data
+# ## Scraping Macomb data
+# Sandali
 
 ################################
 # use utils.py
