@@ -10,59 +10,9 @@ import sheets
 
 # This code pulls the data on Wayne county corona virus cases via:
 # https://www.waynecounty.com/gisserver/rest/services/COVID/COVID_Location/MapServer/0/query?f=json&where=1%3D1&returnGeometry=false&spatialRel=esriSpatialRelIntersects&outFields=*&orderByFields=Confirms%20desc&resultOffset=0&resultRecordCount=43
-# this data relies on city/municipality population, which is currently hard-coded
-# in a good sheet, so we'll hard-code it in here for now. ideally, we're pulling
-# this from some data source...
-
-
-CITY_POPULATION = {
-    "Allen Park": 27076,
-    "Belleville": 3885,
-    "Brownstown Township": 31910,
-    "Canton Township": 93018,
-    "Dearborn": 94333,
-    "Dearborn Heights": 55616,
-    "Ecorse": 9592,
-    "Flat Rock": 10007,
-    "Garden City": 26545,
-    "Gibraltar": 4487,
-    "Grosse Ile Township": 10158,
-    "Grosse Pointe": 5170,
-    "Grosse Pointe Farms": 9146,
-    "Grosse Pointe Park": 11094,
-    "Grosse Pointe Shores": 2770,
-    "Grosse Pointe Woods": 15412,
-    "Hamtramck": 21716,
-    "Harper Woods": 13813,
-    "Highland Park": 10806,
-    "Huron Township": 16066,
-    "Inkster": 24381,
-    "Lincoln Park": 36517,
-    "Livonia": 93971,
-    "Melvindale": 10312,
-    "Northville (City of)": 5970,
-    "Northville Township": 29099,
-    "Plymouth (City of)": 27069,
-    "Plymouth Township": 9168,
-    "Redford Township": 46899,
-    "River Rouge": 7456,
-    "Riverview": 12074,
-    "Rockwood": 3178,
-    "Romulus": 23554,
-    "Southgate": 29088,
-    "Sumpter Township": 9420,
-    "Taylor": 61148,
-    "Trenton": 18220,
-    "Van Buren Township": 28346,
-    "Wayne": 16896,
-    "Westland": 81720,
-    "Woodhaven": 12484,
-    "Wyandotte": 24935,
-    "Detroit": 672662,
-}
+# this data relies on city/municipality population, which is currently in city_population.csv
 
 from requests import get
-#from bs4 import BeautifulSoup
 from datetime import datetime
 import pandas as pd
 
@@ -113,15 +63,18 @@ def main():
     utils.save_data_file("wayne.csv", wayce_csv)
     log.write("4. Saved Data file\n")
 
+    # create a dataframe with the data from arcgis merged with the population csv file
     wayne_df = pd.DataFrame(new_data)
     wayne_full_df = pd.merge(wayne_df, city_population_df, on='Municipality')
 
+    # some cleanup
     wayne_full_df.loc[:,'Confirms'] = wayne_full_df['Confirms'].astype(float)
     wayne_full_df.loc[:,'Deaths'] = wayne_full_df['Deaths'].astype(float)
     wayne_full_df.loc[:,'2018 Population'] = wayne_full_df['2018 Population'].str.replace(',', '').astype(float)
     wayne_full_df.loc[wayne_full_df['Confirms'].isnull(),'Confirms'] = 0.0
     wayne_full_df.loc[wayne_full_df['Deaths'].isnull(),'Deaths'] = 0.0
 
+    # cases per 1,000
     wayne_full_df['Cases per 1,000 population'] = 1000.0*wayne_full_df['Confirms']/wayne_full_df['2018 Population']
 
     # save our a few of the columns to a new dataframe and rename the columns
@@ -137,8 +90,7 @@ def main():
 
     #### save csv to sheets ######
 
-    GOOGLE_SHEET_ID = '1wtkFL6BIZQoLnUVfcr8y_2XyjSzlrPimH6A0lMjtlys'  # prod
-    GOOGLE_SHEET_ID = '13i0HP8f_yVen7aCLXNoarRrxsXIQAHJ6_N1NlfnZRFI'  # test
+    GOOGLE_SHEET_ID = '1wtkFL6BIZQoLnUVfcr8y_2XyjSzlrPimH6A0lMjtlys'
     GOOGLE_SHEET_NAME = 'Wayne County'
     try:
         # we need to convert the dataframe to a list of lists
